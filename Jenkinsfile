@@ -30,11 +30,11 @@ pipeline {
                     bat 'npm test'
                 }
             }
-            stage('SonarQube') {
-                steps {
-                    bat '..\\..\\tools\\hudson.plugins.sonar.SonarRunnerInstallation\\SonarQubeScanner\\bin\\sonar-scanner.bat -Dsonar.host.url=http://localhost:9000 -Dsonar.login=53a0f89afc930a3c200bb204b29c96c8a7cfe641'
-                }
-            }
+            // stage('SonarQube') {
+            //     steps {
+            //         bat '..\\..\\tools\\hudson.plugins.sonar.SonarRunnerInstallation\\SonarQubeScanner\\bin\\sonar-scanner.bat -Dsonar.host.url=http://localhost:9000 -Dsonar.login=53a0f89afc930a3c200bb204b29c96c8a7cfe641'
+            //     }
+            // }
           
             stage('Build Docker Image') {
                 steps {
