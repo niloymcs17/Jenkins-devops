@@ -17,7 +17,7 @@ pipeline {
             stage('Git code checkout') {
                 steps {
                     // One or more steps need to be included within the steps block.
-		    checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-cred', url: 'https://github.com/niloymcs17/nagp-devops']]])
+		    checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-cred', url: 'https://github.com/niloymcs17/app_niloybiswas']]])
                 }
             }
             stage('npm install') {
