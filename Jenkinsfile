@@ -5,8 +5,9 @@ pipeline {
   }
   environment {
     dockerImage = "dreamspace04/nagp-devops-nodejs"
-    username = "dreamspace04"
-    port = 7100
+    username = "niloybiswas"
+    devport = 7300
+    masterport = 7200
   }
   tools {
     nodejs 'nodejs'
@@ -49,7 +50,6 @@ pipeline {
 
     stage("remove existing container") {
       steps {
-        echo evn
         bat "docker rm c-${username}-master"
       }
     }
@@ -65,8 +65,21 @@ pipeline {
     }
     stage('Docker Run') {
       steps {
-        echo "Running Docker Image"
-        bat "docker run --name c-${username}-master -d -p=${port}:7100 ${dockerImage}:${BUILD_NUMBER}"
+          if(env.BRANCH_NAME == "master") {
+            echo "Running Docker Image Master"
+            bat "docker run --name c-${username}-master -d -p=${masterport}:7100 ${dockerImage}:${BUILD_NUMBER}"
+          } else {
+            echo "Running Docker Image Dev"
+            bat "docker run --name c-${username}-develop -d -p=${devport}:7100 ${dockerImage}:${BUILD_NUMBER}"
+          }
+      } 
+    }
+
+    stage('k8s Run') {
+      steps {
+        echo "k8s"
+        bat "gcloud container clusters get-credentials autopilot-cluster-1 --region us-central1 --project unique-iterator-321302"
+        bat "kubectl apply -f k8s/deployment.yaml"
       }
     }
   }
