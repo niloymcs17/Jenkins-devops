@@ -48,11 +48,11 @@ pipeline {
 
     }
 
-    stage("remove existing container") {
-      steps {
-        bat "docker rm c-${username}-master"
-      }
-    }
+    // stage("remove existing container") {
+    //   steps {
+    //     bat "docker rm c-${username}-master"
+    //   }
+    // }
     stage('Docker Push') {
       steps {
         echo "Tagging name with build number"
