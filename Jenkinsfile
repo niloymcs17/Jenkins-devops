@@ -4,7 +4,7 @@ pipeline {
             timestamps()
     }
     environment {
-        location = "dreamspace04/nagp-devops-nodejs"
+        dockerImage = "dreamspace04/nagp-devops-nodejs"
         username = "dreamspace04"
         port=7100
     }
@@ -20,7 +20,7 @@ pipeline {
 		    checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-cred', url: 'https://github.com/niloymcs17/app_niloybiswas']]])
                 }
             }
-            stage('npm install') {
+            stage('Node Install') {
                 steps {
                     bat 'npm install'
                 }
@@ -41,21 +41,25 @@ pipeline {
                     echo "Building Docker Image"
                     bat "docker build -t i-${username}-master ."
                 }
+
+                steps {
+                    echo evn
+                }
             }
             stage('Docker Push') {
                 steps {
                     echo "Tagging name with build number"
-                    bat "docker tag i-${username}-master ${location}:${BUILD_NUMBER}"
+                    bat "docker tag i-${username}-master ${dockerImage}:${BUILD_NUMBER}"
   
                     withDockerRegistry([credentialsId: 'DockerHub',url:""]){
-                        bat "docker push ${location}:${BUILD_NUMBER}"
+                        bat "docker push ${dockerImage}:${BUILD_NUMBER}"
                     }
                 }
             }
             stage('Docker Run') {
                 steps {
                     echo "Running Docker Image"
-                    bat "docker run --name c-${username}-master -d -p=${port}:7100 ${location}:${BUILD_NUMBER}"
+                    bat "docker run --name c-${username}-master -d -p=${port}:7100 ${dockerImage}:${BUILD_NUMBER}"
                 }
             }
     }
