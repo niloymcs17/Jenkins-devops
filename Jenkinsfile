@@ -65,13 +65,13 @@ pipeline {
     }
     stage('Docker Run') {
       steps {
-          if(env.BRANCH_NAME == "master") {
+        //   if(env.BRANCH_NAME == "master") {
             echo "Running Docker Image Master"
             bat "docker run --name c-${username}-master -d -p=${masterport}:7100 ${dockerImage}:${BUILD_NUMBER}"
-          } else {
-            echo "Running Docker Image Dev"
-            bat "docker run --name c-${username}-develop -d -p=${devport}:7100 ${dockerImage}:${BUILD_NUMBER}"
-          }
+        //   } else {
+        //     echo "Running Docker Image Dev"
+        //     bat "docker run --name c-${username}-develop -d -p=${devport}:7100 ${dockerImage}:${BUILD_NUMBER}"
+        //   }
       } 
     }
 
