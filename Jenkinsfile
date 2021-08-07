@@ -16,8 +16,7 @@ pipeline {
     stages {
             stage('Git code checkout') {
                 steps {
-                    // One or more steps need to be included within the steps block.
-		    checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-cred', url: 'https://github.com/niloymcs17/app_niloybiswas']]])
+        		    checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-cred', url: 'https://github.com/niloymcs17/app_niloybiswas']]])
                 }
             }
             stage('Node Install') {
@@ -44,6 +43,7 @@ pipeline {
 
                 steps {
                     echo evn
+                    bat "docker rm c-${username}-master"
                 }
             }
             stage('Docker Push') {
