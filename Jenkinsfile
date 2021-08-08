@@ -8,6 +8,8 @@ pipeline {
     username = "niloybiswas"
     devport = 7300
     masterport = 7200
+    k8sMasterPort = 30157
+    k8sDevelopPort = 30158
   }
   tools {
     nodejs 'nodejs'
@@ -24,58 +26,46 @@ pipeline {
         ]])
       }
     }
-    stage('Node Install') {
+    stage('Build') {
       steps {
         echo "My branch is: ${env.BRANCH_NAME}"
         bat 'npm install'
       }
     }
 
-    stage('testing ') {
-      steps {
-        script {
-          if (env.BRANCH_NAME == 'master') {
-            echo 'I only execute on the master branch'
-          } else {
-            echo 'I execute elsewhere'
-          }
-        }
-      }
-    }
+    // stage('testing ') {
+    //   steps {
+    //     script {
+    //       if (env.BRANCH_NAME == 'master') {
+    //         echo 'I only execute on the master branch'
+    //       } else {
+    //         echo 'I execute elsewhere'
+    //       }
+    //     }
+    //   }
+    // }
 
-    stage('npm test') {
+    stage('Unit Testing') {
       steps {
         bat 'npm test'
       }
     }
-    // stage('SonarQube') {
-    //     steps {
-    //         bat '..\\..\\tools\\hudson.plugins.sonar.SonarRunnerInstallation\\SonarQubeScanner\\bin\\sonar-scanner.bat -Dsonar.host.url=http://localhost:9000 -Dsonar.login=53a0f89afc930a3c200bb204b29c96c8a7cfe641'
-    //     }
-    // }
 
-    stage('Build Docker Image') {
-      when {
-        branch 'master'
-      }
-      steps {
-        echo 'I only execute on the master branch.'
-      }
-      // when { branch 'develop' }
-      // steps { 
-      //     echo 'I only execute on the develop branch.' 
-      // } 
-      // steps {
-      //   echo "Building Docker Image"
-      //   bat "docker build -t i-${username}-master ."
-      // }
-
+    stage('Sonar Analysis') {
+        steps {
+            bat '..\\..\\tools\\hudson.plugins.sonar.SonarRunnerInstallation\\SonarQubeScanner\\bin\\sonar-scanner.bat -Dsonar.host.url=http://localhost:9000 -Dsonar.login=53a0f89afc930a3c200bb204b29c96c8a7cfe641'
+        }
     }
 
-    stage("Docker Push") {
+    stage('Docker Image') {
+        echo "Building Docker Image"
+        bat "docker build -t i-${username}-${env.BRANCH_NAME} ."
+    }
+
+    stage("Containers") {
       steps {
         parallel(
-          "firstTask": {
+          "Push to Docker Hub": {
             echo "Running Docker Image Master"
             bat "docker tag i-${username}-${env.BRANCH_NAME} ${dockerImage}:${BUILD_NUMBER}"
 
@@ -83,7 +73,7 @@ pipeline {
               bat "docker push ${dockerImage}:${BUILD_NUMBER}"
             }
           },
-          "secondTask": {
+          "Pre-container check": {
             bat "docker rm c-${username}-master"
           }
         )
@@ -95,25 +85,16 @@ pipeline {
     //     bat "docker rm c-${username}-master"
     //   }
     // }
-    // stage('Docker Push') {
+   
+    // stage('Docker deployment') {
     //   steps {
-    //     echo "Tagging name with build number"
-    //     bat "docker tag i-${username}-master ${dockerImage}:${BUILD_NUMBER}"
-
-    //     withDockerRegistry([credentialsId: 'DockerHub', url: ""]) {
-    //       bat "docker push ${dockerImage}:${BUILD_NUMBER}"
-    //     }
-    //   }
-    // }
-    // stage('Docker Run') {
-    //   steps {
-    //     //   if(env.BRANCH_NAME == "master") {
+    //       if(env.BRANCH_NAME == "master") {
     //         echo "Running Docker Image Master"
     //         bat "docker run --name c-${username}-master -d -p=${masterport}:7100 ${dockerImage}:${BUILD_NUMBER}"
-    //     //   } else {
-    //     //     echo "Running Docker Image Dev"
-    //     //     bat "docker run --name c-${username}-develop -d -p=${devport}:7100 ${dockerImage}:${BUILD_NUMBER}"
-    //     //   }
+    //       } else {
+    //         echo "Running Docker Image Dev"
+    //         bat "docker run --name c-${username}-develop -d -p=${devport}:7100 ${dockerImage}:${BUILD_NUMBER}"
+    //       }
     //   } 
     // }
 
