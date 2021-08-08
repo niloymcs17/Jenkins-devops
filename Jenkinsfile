@@ -26,6 +26,7 @@ pipeline {
     }
     stage('Node Install') {
       steps {
+        echo "My branch is: ${env.BRANCH_NAME}"
         bat 'npm install'
       }
     }
@@ -45,10 +46,10 @@ pipeline {
       steps { 
           echo 'I only execute on the master branch.' 
       } 
-      when { branch 'develop' }
-      steps { 
-          echo 'I only execute on the develop branch.' 
-      } 
+      // when { branch 'develop' }
+      // steps { 
+      //     echo 'I only execute on the develop branch.' 
+      // } 
       // steps {
       //   echo "Building Docker Image"
       //   bat "docker build -t i-${username}-master ."
