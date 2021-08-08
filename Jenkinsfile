@@ -91,13 +91,15 @@ pipeline {
 
     stage('Docker deployment') {
       steps {
-          if(env.BRANCH_NAME == "master") {
-            echo "Running Docker Image Master"
-            bat "docker run --name c-${username}-${env.BRANCH_NAME} -d -p=${masterport}:7100 ${dockerImage}:${BUILD_NUMBER}"
-          } else {
-            echo "Running Docker Image Dev"
-            bat "docker run --name c-${username}-${env.BRANCH_NAME} -d -p=${devport}:7100 ${dockerImage}:${BUILD_NUMBER}"
-          }
+         script {
+            if(env.BRANCH_NAME == "master") {
+              echo "Running Docker Image Master"
+              bat "docker run --name c-${username}-${env.BRANCH_NAME} -d -p=${masterport}:7100 ${dockerImage}:${BUILD_NUMBER}"
+            } else {
+              echo "Running Docker Image Dev"
+              bat "docker run --name c-${username}-${env.BRANCH_NAME} -d -p=${devport}:7100 ${dockerImage}:${BUILD_NUMBER}"
+            }
+         }
       } 
     }
 
