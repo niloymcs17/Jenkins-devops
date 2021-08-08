@@ -31,16 +31,16 @@ pipeline {
       }
     }
 
-    stage('testing '){
+    stage('testing ') {
       steps {
-                script {
-                    if (env.BRANCH_NAME == 'master') {
-                        echo 'I only execute on the master branch'
-                    } else {
-                        echo 'I execute elsewhere'
-                    }
-                }
-            }
+        script {
+          if (env.BRANCH_NAME == 'master') {
+            echo 'I only execute on the master branch'
+          } else {
+            echo 'I execute elsewhere'
+          }
+        }
+      }
     }
 
     stage('npm test') {
@@ -55,10 +55,12 @@ pipeline {
     // }
 
     stage('Build Docker Image') {
-      when { branch 'master' }
-      steps { 
-          echo 'I only execute on the master branch.' 
-      } 
+      when {
+        branch 'master'
+      }
+      steps {
+        echo 'I only execute on the master branch.'
+      }
       // when { branch 'develop' }
       // steps { 
       //     echo 'I only execute on the develop branch.' 
@@ -68,6 +70,24 @@ pipeline {
       //   bat "docker build -t i-${username}-master ."
       // }
 
+    }
+
+    stage("Docker Push") {
+      steps {
+        parallel(
+          "firstTask": {
+            echo "Running Docker Image Master"
+            bat "docker tag i-${username}-${env.BRANCH_NAME} ${dockerImage}:${BUILD_NUMBER}"
+
+            withDockerRegistry([credentialsId: 'DockerHub', url: ""]) {
+              bat "docker push ${dockerImage}:${BUILD_NUMBER}"
+            }
+          },
+          "secondTask": {
+            bat "docker rm c-${username}-master"
+          }
+        )
+      }
     }
 
     // stage("remove existing container") {
