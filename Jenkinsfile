@@ -51,5 +51,5 @@ pipeline {
             echo 'I only execute on the master branch.' 
         }
     }
-    
+  }
 }
