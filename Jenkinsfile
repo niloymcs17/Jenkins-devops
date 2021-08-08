@@ -17,11 +17,7 @@ pipeline {
   stages {
     stage('Git code checkout') {
       steps {
-        checkout([$class: 'GitSCM', branches: [
-          [name: '*/master']
-        ], extensions: [], userRemoteConfigs: [
-          [credentialsId: 'github-cred', url: 'https://github.com/niloymcs17/app_niloybiswas']
-        ]])
+        checkout scm
       }
     }
     stage('Node Install') {
@@ -49,9 +45,10 @@ pipeline {
     }
 
     stage("detect branch") {
-      echo "${evn.BRANCH_NAME}"
-      when { branch 'develop' }
+      // when { branch 'develop' }
         steps { 
+            echo "${evn.BRANCH_NAME}"
+
             echo 'I only execute on the master branch.' 
         }
     }
