@@ -10,6 +10,10 @@ pipeline {
     masterport = 7200
     k8sMasterPort = 30157
     k8sDevelopPort = 30158
+    CREDENTIALS_ID = 'gcp-cred'
+    LOCATION = 'us-central1-c'
+    CLUSTER_NAME = 'niloy-cluster'
+    PROJECT_ID = 'unique-iterator-321302'
   }
   tools {
     nodejs 'nodejs'
@@ -29,12 +33,18 @@ pipeline {
     }
 
     stage('Unit Testing') {
+      when {
+        branch 'master'
+      }
       steps {
         bat 'npm test'
       }
     }
 
     stage('Sonar Analysis') {
+      when {
+        branch 'develop'
+      }
       steps {
         bat '..\\..\\tools\\hudson.plugins.sonar.SonarRunnerInstallation\\SonarQubeScanner\\bin\\sonar-scanner.bat -Dsonar.host.url=http://localhost:9000 -Dsonar.login=53a0f89afc930a3c200bb204b29c96c8a7cfe641'
       }
@@ -64,7 +74,7 @@ pipeline {
               try {
                 bat "docker rm -f c-${username}-${env.BRANCH_NAME}"
               } catch (Exception e) {
-                echo 'No container Present'
+                echo 'No Existing container'
               }
             }
           }
@@ -86,11 +96,10 @@ pipeline {
       }
     }
 
-    stage('k8s Run') {
+    stage('Kubernetes Deployment') {
       steps {
-        echo "k8s"
-        bat "gcloud container clusters get-credentials autopilot-cluster-1 --region us-central1 --project unique-iterator-321302"
-        bat "kubectl apply -f k8s/deployment.yaml"
+        echo 'Deploying to Google Kubernetes'
+        step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'k8s/deployment.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: false])
       }
     }
   }

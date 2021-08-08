@@ -1,31 +1,40 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-deployment
-  namespace: niloy
+  name: niloy-app-master-deployment
+  namespace: kubernetes-cluster-niloybiswas
   labels:
-    app: nginx
+    app: niloy-app-master
 spec:
-  replicas: 2
+  replicas: 4
   selector:
     matchLabels:
-      app: nginx
+      app: niloy-app-master
   template:
     metadata:
       labels:
-        app: nginx
+        app: niloy-app-master
     spec:
       containers:
-        - name: nginx
+        - name: niloy-app-master
           image: dreamspace04/nagp-devops-nodejs:16
           ports:
             - name: http
-              containerPort: 3001
+              containerPort: 7100
               protocol: TCP
-          resources:
-            requests:
-              memory: "250Mi"
-              cpu: "250m"
-            limits: 
-              memory: "400Mi"
-              cpu: "500m"   
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+  namespace: kubernetes-cluster-niloybiswas
+spec:
+  selector:
+    app: niloy-app-master
+  type: NodePort
+  ports:
+    - protocol: TCP
+      nodePort: 30157
+      targetPort: 7100
+      port: 7100
