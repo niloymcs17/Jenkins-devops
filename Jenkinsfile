@@ -4,7 +4,7 @@ pipeline {
     timestamps()
   }
   environment {
-    dockerImage = "dreamspace04/nagp-devops-nodejs"
+    dockerImage = "dreamspace04/"
     username = "niloybiswas"
     devport = 7300
     masterport = 7200
@@ -63,12 +63,13 @@ pipeline {
         parallel(
           "Push to Docker Hub": {
             echo "Pushing Docker Image ${env.BRANCH_NAME}"
-            bat "docker tag i-${username}-${env.BRANCH_NAME} ${dockerImage}:${BUILD_NUMBER}"
-            bat "docker tag i-${username}-${env.BRANCH_NAME} ${dockerImage}:latest"
+            bat "docker tag i-${username}-${env.BRANCH_NAME} ${dockerImage}${env.BRANCH_NAME}:${BUILD_NUMBER}"
+            bat "docker tag i-${username}-${env.BRANCH_NAME} ${dockerImage}${env.BRANCH_NAME}:latest"
+
 
             withDockerRegistry([credentialsId: 'DockerHub', url: ""]) {
-              bat "docker push ${dockerImage}:${BUILD_NUMBER}"
-              bat "docker push ${dockerImage}:latest"
+              bat "docker push ${dockerImage}${env.BRANCH_NAME}:${BUILD_NUMBER}"
+              bat "docker push ${dockerImage}${env.BRANCH_NAME}:latest"
             }
           },
           "Pre-container check": {
@@ -89,10 +90,10 @@ pipeline {
         script {
           if (env.BRANCH_NAME == "master") {
             echo "Running Docker Image Master"
-            bat "docker run --name c-${username}-${env.BRANCH_NAME} -d -p=${masterport}:7100 ${dockerImage}:${BUILD_NUMBER}"
+            bat "docker run --name c-${username}-${env.BRANCH_NAME} -d -p=${masterport}:7100 ${dockerImage}${env.BRANCH_NAME}:${BUILD_NUMBER}"
           } else {
             echo "Running Docker Image Dev"
-            bat "docker run --name c-${username}-${env.BRANCH_NAME} -d -p=${devport}:7100 ${dockerImage}:${BUILD_NUMBER}"
+            bat "docker run --name c-${username}-${env.BRANCH_NAME} -d -p=${devport}:7100 ${dockerImage}${env.BRANCH_NAME}:${BUILD_NUMBER}"
           }
         }
       }
