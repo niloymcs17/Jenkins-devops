@@ -69,7 +69,7 @@ pipeline {
       steps {
         parallel(
           "Push to Docker Hub": {
-            echo "Running Docker Image Master"
+            echo "Pushing Docker Image ${env.BRANCH_NAME}"
             bat "docker tag i-${username}-${env.BRANCH_NAME} ${dockerImage}:${BUILD_NUMBER}"
 
             withDockerRegistry([credentialsId: 'DockerHub', url: ""]) {
@@ -89,17 +89,17 @@ pipeline {
     //   }
     // }
 
-    // stage('Docker deployment') {
-    //   steps {
-    //       if(env.BRANCH_NAME == "master") {
-    //         echo "Running Docker Image Master"
-    //         bat "docker run --name c-${username}-master -d -p=${masterport}:7100 ${dockerImage}:${BUILD_NUMBER}"
-    //       } else {
-    //         echo "Running Docker Image Dev"
-    //         bat "docker run --name c-${username}-develop -d -p=${devport}:7100 ${dockerImage}:${BUILD_NUMBER}"
-    //       }
-    //   } 
-    // }
+    stage('Docker deployment') {
+      steps {
+          if(env.BRANCH_NAME == "master") {
+            echo "Running Docker Image Master"
+            bat "docker run --name c-${username}-${env.BRANCH_NAME} -d -p=${masterport}:7100 ${dockerImage}:${BUILD_NUMBER}"
+          } else {
+            echo "Running Docker Image Dev"
+            bat "docker run --name c-${username}-${env.BRANCH_NAME} -d -p=${devport}:7100 ${dockerImage}:${BUILD_NUMBER}"
+          }
+      } 
+    }
 
     stage('k8s Run') {
       steps {
