@@ -31,7 +31,7 @@ pipeline {
       }
     }
 
-    stage ('testing '){
+    stage('testing '){
       script {
                     if (env.BRANCH_NAME == 'master') {
                         echo 'I only execute on the master branch'
@@ -40,7 +40,7 @@ pipeline {
                     }
                 }
     }
-    
+
     stage('npm test') {
       steps {
         bat 'npm test'
