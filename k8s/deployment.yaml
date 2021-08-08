@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: niloy-app-master-deployment
+  name: niloy-app-dev-deployment
   namespace: kubernetes-cluster-niloybiswas
   labels:
     app: niloy-app-dev
