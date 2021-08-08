@@ -10,6 +10,10 @@ pipeline {
     masterport = 7200
     k8sMasterPort = 30157
     k8sDevelopPort = 30158
+    CREDENTIALS_ID = 'gcp-cred'
+    LOCATION = 'us-central1-c'
+    CLUSTER_NAME = 'niloy-cluster'
+    PROJECT_ID = 'unique-iterator-321302'
   }
   tools {
     nodejs 'nodejs'
@@ -70,7 +74,7 @@ pipeline {
               try {
                 bat "docker rm -f c-${username}-${env.BRANCH_NAME}"
               } catch (Exception e) {
-                echo 'No container Present'
+                echo 'No Existing container'
               }
             }
           }

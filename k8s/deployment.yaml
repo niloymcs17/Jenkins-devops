@@ -20,7 +20,7 @@ spec:
           image: dreamspace04/nagp-devops-nodejs:16
           ports:
             - name: http
-              containerPort: 3001
+              containerPort: 7100
               protocol: TCP
 
 ---
@@ -36,5 +36,5 @@ spec:
   ports:
     - protocol: TCP
       nodePort: 30157
-      targetPort: 3001
-      port: 3001
+      targetPort: 7100
+      port: 7100
