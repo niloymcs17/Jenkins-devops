@@ -64,9 +64,12 @@ pipeline {
           "Push to Docker Hub": {
             echo "Pushing Docker Image ${env.BRANCH_NAME}"
             bat "docker tag i-${username}-${env.BRANCH_NAME} ${dockerImage}${env.BRANCH_NAME}:${BUILD_NUMBER}"
+            bat "docker tag i-${username}-${env.BRANCH_NAME} ${dockerImage}${env.BRANCH_NAME}:latest"
+
 
             withDockerRegistry([credentialsId: 'DockerHub', url: ""]) {
               bat "docker push ${dockerImage}${env.BRANCH_NAME}:${BUILD_NUMBER}"
+              bat "docker push ${dockerImage}${env.BRANCH_NAME}:latest"
             }
           },
           "Pre-container check": {
