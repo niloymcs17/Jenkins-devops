@@ -1,8 +1,15 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: kubernetes-cluster-niloybiswas
+  labels: 
+    name: kubernetes-cluster-niloybiswas
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx-deployment
-  namespace: niloy
+  namespace: kubernetes-cluster-niloybiswas
   labels:
     app: nginx
 spec:
@@ -29,3 +36,18 @@ spec:
             limits: 
               memory: "400Mi"
               cpu: "500m"   
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+  namespace: kubernetes-cluster-niloybiswas
+spec:
+  selector:
+    app: nginx
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 9600
+      targetPort: 3001
