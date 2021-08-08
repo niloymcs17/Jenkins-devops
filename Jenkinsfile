@@ -60,7 +60,7 @@ pipeline {
     stage('Docker Image') {
       steps {
         echo "Building Docker Image"
-        bat "docker build -t i-${username}-${env.BRANCH_NAME} "
+        bat "docker build -t i-${username}-${env.BRANCH_NAME} ."
       }
 
     }
