@@ -14,7 +14,6 @@ pipeline {
   tools {
     nodejs 'nodejs'
     jdk 'Java'
-    dockerTool 'Test_Docker'
   }
   stages {
     stage('Git code checkout') {
@@ -30,12 +29,18 @@ pipeline {
     }
 
     stage('Unit Testing') {
+      when {
+        branch 'master'
+      }
       steps {
         bat 'npm test'
       }
     }
 
     stage('Sonar Analysis') {
+      when {
+        branch 'develop'
+      }
       steps {
         bat '..\\..\\tools\\hudson.plugins.sonar.SonarRunnerInstallation\\SonarQubeScanner\\bin\\sonar-scanner.bat -Dsonar.host.url=http://localhost:9000 -Dsonar.login=53a0f89afc930a3c200bb204b29c96c8a7cfe641'
       }
@@ -87,11 +92,10 @@ pipeline {
       }
     }
 
-    stage('k8s Run') {
+    stage('Kubernetes Deployment') {
       steps {
-        echo "k8s"
-        bat "gcloud container clusters get-credentials autopilot-cluster-1 --region us-central1 --project unique-iterator-321302"
-        bat "kubectl apply -f k8s/deployment.yaml"
+        echo 'Deploying to Google Kubernetes'
+        step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'k8s/deployment.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: false])
       }
     }
   }
