@@ -29,18 +29,6 @@ pipeline {
       }
     }
 
-    // stage('testing ') {
-    //   steps {
-    //     script {
-    //       if (env.BRANCH_NAME == 'master') {
-    //         echo 'I only execute on the master branch'
-    //       } else {
-    //         echo 'I execute elsewhere'
-    //       }
-    //     }
-    //   }
-    // }
-
     stage('Unit Testing') {
       steps {
         bat 'npm test'
@@ -73,30 +61,30 @@ pipeline {
             }
           },
           "Pre-container check": {
-            bat "docker rm c-${username}-master"
+            script {
+              try {
+                bat "docker rm -f c-${username}-${env.BRANCH_NAME}"
+              } catch (Exception e) {
+                echo 'No container Present'
+              }
+            }
           }
         )
       }
     }
 
-    // stage("remove existing container") {
-    //   steps {
-    //     bat "docker rm c-${username}-master"
-    //   }
-    // }
-
     stage('Docker deployment') {
       steps {
-         script {
-            if(env.BRANCH_NAME == "master") {
-              echo "Running Docker Image Master"
-              bat "docker run --name c-${username}-${env.BRANCH_NAME} -d -p=${masterport}:7100 ${dockerImage}:${BUILD_NUMBER}"
-            } else {
-              echo "Running Docker Image Dev"
-              bat "docker run --name c-${username}-${env.BRANCH_NAME} -d -p=${devport}:7100 ${dockerImage}:${BUILD_NUMBER}"
-            }
-         }
-      } 
+        script {
+          if (env.BRANCH_NAME == "master") {
+            echo "Running Docker Image Master"
+            bat "docker run --name c-${username}-${env.BRANCH_NAME} -d -p=${masterport}:7100 ${dockerImage}:${BUILD_NUMBER}"
+          } else {
+            echo "Running Docker Image Dev"
+            bat "docker run --name c-${username}-${env.BRANCH_NAME} -d -p=${devport}:7100 ${dockerImage}:${BUILD_NUMBER}"
+          }
+        }
+      }
     }
 
     stage('k8s Run') {
