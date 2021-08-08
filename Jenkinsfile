@@ -49,10 +49,10 @@ pipeline {
       steps { 
           echo 'I only execute on the develop branch.' 
       } 
-      steps {
-        echo "Building Docker Image"
-        bat "docker build -t i-${username}-master ."
-      }
+      // steps {
+      //   echo "Building Docker Image"
+      //   bat "docker build -t i-${username}-master ."
+      // }
 
     }
 
