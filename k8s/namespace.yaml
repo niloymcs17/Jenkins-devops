@@ -1,6 +1,6 @@
 kind: Namespace
 apiVersion: v1
 metadata:
-  name: niloy
+  name: kubernetes-cluster-niloybiswas
   labels: 
-    name: niloy
+    name: kubernetes-cluster-niloybiswas
