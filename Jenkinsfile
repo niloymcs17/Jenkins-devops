@@ -52,14 +52,17 @@ pipeline {
     }
 
     stage('Sonar Analysis') {
-        steps {
-            bat '..\\..\\tools\\hudson.plugins.sonar.SonarRunnerInstallation\\SonarQubeScanner\\bin\\sonar-scanner.bat -Dsonar.host.url=http://localhost:9000 -Dsonar.login=53a0f89afc930a3c200bb204b29c96c8a7cfe641'
-        }
+      steps {
+        bat '..\\..\\tools\\hudson.plugins.sonar.SonarRunnerInstallation\\SonarQubeScanner\\bin\\sonar-scanner.bat -Dsonar.host.url=http://localhost:9000 -Dsonar.login=53a0f89afc930a3c200bb204b29c96c8a7cfe641'
+      }
     }
 
     stage('Docker Image') {
+      steps {
         echo "Building Docker Image"
-        bat "docker build -t i-${username}-${env.BRANCH_NAME} ."
+        bat "docker build -t i-${username}-${env.BRANCH_NAME} "
+      }
+
     }
 
     stage("Containers") {
@@ -85,7 +88,7 @@ pipeline {
     //     bat "docker rm c-${username}-master"
     //   }
     // }
-   
+
     // stage('Docker deployment') {
     //   steps {
     //       if(env.BRANCH_NAME == "master") {
