@@ -14,7 +14,6 @@ pipeline {
   tools {
     nodejs 'nodejs'
     jdk 'Java'
-    dockerTool 'Test_Docker'
   }
   stages {
     stage('Git code checkout') {
