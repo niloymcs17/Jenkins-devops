@@ -4,19 +4,19 @@ metadata:
   name: niloy-app-master-deployment
   namespace: kubernetes-cluster-niloybiswas
   labels:
-    app: niloy-app-master
+    app: niloy-app-dev
 spec:
   replicas: 4
   selector:
     matchLabels:
-      app: niloy-app-master
+      app: niloy-app-dev
   template:
     metadata:
       labels:
-        app: niloy-app-master
+        app: niloy-app-dev
     spec:
       containers:
-        - name: niloy-app-master
+        - name: niloy-app-dev
           image: dreamspace04/nagp-devops-nodejs:16
           ports:
             - name: http
@@ -31,10 +31,10 @@ metadata:
   namespace: kubernetes-cluster-niloybiswas
 spec:
   selector:
-    app: niloy-app-master
+    app: niloy-app-dev
   type: NodePort
   ports:
     - protocol: TCP
-      nodePort: 30157
+      nodePort: 30158
       targetPort: 7100
       port: 7100
