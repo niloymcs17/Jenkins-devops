@@ -45,10 +45,9 @@ pipeline {
     }
 
     stage("detect branch") {
-      // when { branch 'develop' }
+      when { branch 'develop' }
         steps { 
-            echo "${evn.BRANCH_NAME}"
-
+            // echo "${evn.BRANCH_NAME}"
             echo 'I only execute on the master branch.' 
         }
     }
